@@ -1,0 +1,7 @@
+name: ${project.name}
+version: ${project.version}-ALPHA-b${buildNo}
+main: ${project.groupId}.${project.name}
+author: qruet
+description: ${description}
+api-version: 1.13
+prefix: ${project.name}
