@@ -2,7 +2,7 @@
 A rewrite the Phantoms' AI so that they are a more interesting mob and less of a nuisance. Inspired by SimplySarc's "How SHOULD HAVE Minecraft Phantom worked?"
 
 ## Media
-**You can checkout SimplySarc's video here: **
+**You can checkout SimplySarc's video here:**
 <br>
 [![SimplySarc's Video](https://img.youtube.com/vi/30BmmdCnc3A/0.jpg)](https://www.youtube.com/watch?v=30BmmdCnc3A)
 
