@@ -15,14 +15,15 @@ public class MobEffects extends net.minecraft.server.v1_16_R3.MobEffects {
 
     private static net.minecraft.server.v1_16_R3.MobEffectList a(int i, String s, net.minecraft.server.v1_16_R3.MobEffectList mobeffectlist) {
         MobEffectList effect = IRegistry.a(IRegistry.MOB_EFFECT, i, s, mobeffectlist);
-        if(effect != null && PotionEffectType.getById(33) == null) {
+        if(effect != null) {
+            Insomnia.logger().info("Registering id: " + i);
             PotionEffectType.registerPotionEffectType(new CraftPotionEffectType(effect));
         }
         return effect;
     }
 
     static {
-        INSOMNIA = a(33, "insomnia", new MobEffectInsomnia(MobEffectInfo.HARMFUL, 1245995));
+        INSOMNIA = a(dev.qruet.insomnia.effect.PotionEffectType.INSOMNIA.getId(), "insomnia", new MobEffectInsomnia(MobEffectInfo.HARMFUL, 1245995)); // 33
     }
 
 

@@ -9,12 +9,16 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Custom PotionEffectType class - also responsible for preparing the original PotionEffectType class with the registration of the Insomnia Mob Effect.
  */
 public abstract class PotionEffectType extends org.bukkit.potion.PotionEffectType {
-    public static final org.bukkit.potion.PotionEffectType INSOMNIA = new InsomniaPotionEffectTypeWrapper(33);
+
+    public static final org.bukkit.potion.PotionEffectType INSOMNIA = new InsomniaPotionEffectTypeWrapper(24);
 
     protected PotionEffectType(int id) {
         super(id);
@@ -23,13 +27,22 @@ public abstract class PotionEffectType extends org.bukkit.potion.PotionEffectTyp
     public static void setup(JavaPlugin plugin) {
         try {
             Field byIdField = ReflectionUtils.getField(org.bukkit.potion.PotionEffectType.class, "byId");
+            Field byNameField = ReflectionUtils.getField(org.bukkit.potion.PotionEffectType.class, "byName");
             org.bukkit.potion.PotionEffectType[] byId = (org.bukkit.potion.PotionEffectType[]) byIdField.get(null);
-            if (byId.length >= 34 && byId[33].getName().equals("insomnia")) {
-                plugin.getLogger().info("Already registered..");
-                byId[33] = null; // reset
-            } else {
+            Map<String, org.bukkit.potion.PotionEffectType> byName = (Map<String, org.bukkit.potion.PotionEffectType>) byNameField.get(null);
+
+            if (byId.length >= (INSOMNIA.getId() + 1)) {
+                plugin.getLogger().info("Setting index " + INSOMNIA.getId());
+                // === reset
+                byName.remove(org.bukkit.potion.PotionEffectType.GLOWING.getName().toLowerCase(Locale.ENGLISH));
+                byId[INSOMNIA.getId()] = null;
+                // ===
+            } /*else {
                 byIdField.set(null,  Arrays.copyOf(byId, 34));
-            }
+            }*/
+
+            byIdField.set(null, byId);
+            byNameField.set(null, byName);
             ReflectionUtils.getField(org.bukkit.potion.PotionEffectType.class, "acceptingNew").set(null, true);
             plugin.getLogger().info("Successfully registered custom effect, " + MobEffects.INSOMNIA.c() + ".");
             ReflectionUtils.getField(org.bukkit.potion.PotionEffectType.class, "acceptingNew").set(null, false);

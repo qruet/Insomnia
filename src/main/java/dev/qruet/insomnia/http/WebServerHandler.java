@@ -8,6 +8,8 @@ import io.vertx.core.http.HttpServer;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+
 /**
  * This will handle http requests by the client for a resource pack
  */
@@ -43,7 +45,6 @@ public class WebServerHandler {
         try {
             httpServer = Vertx.vertx().createHttpServer();
             httpServer.requestHandler(httpServerRequest -> {
-                Bukkit.broadcastMessage("Received http server request!");
                 httpServerRequest.response().sendFile(getFileLocation());
             });
             httpServer.listen(port);
@@ -63,7 +64,7 @@ public class WebServerHandler {
     }
 
     private String getFileLocation() {
-        return ResourcePackIO.getResourcePath().getAbsolutePath();
+        return new File(ResourcePackIO.getResourcePath()).getAbsolutePath();
     }
 
     public int getPort() {

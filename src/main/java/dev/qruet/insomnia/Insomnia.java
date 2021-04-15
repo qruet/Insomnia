@@ -26,8 +26,10 @@ public class Insomnia extends JavaPlugin {
         config = ConfigIO.setup(this);
         config.deserialize();
 
-        this.httpHandler = new WebServerHandler(this);
-        this.httpHandler.start();
+        if(config.get("Resource Pack.Server.Enabled", Boolean.class)) {
+            this.httpHandler = new WebServerHandler(this);
+            this.httpHandler.start();
+        }
 
         PotionEffectType.setup(this);
 

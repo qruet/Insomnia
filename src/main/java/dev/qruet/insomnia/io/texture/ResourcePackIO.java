@@ -10,8 +10,13 @@ import java.io.File;
  */
 public class ResourcePackIO {
 
-    public static File getResourcePath() {
-        return new File(JavaPlugin.getPlugin(Insomnia.class).getDataFolder().getPath() + "/resources/pack.zip");
+    public static String getResourcePath() {
+        String address = Insomnia.getInsomniaConfig().get("Resource Pack.Download Link", String.class);
+        if(address == null || address.isBlank()) {
+            return JavaPlugin.getPlugin(Insomnia.class).getDataFolder().getPath() + "/resources/pack.zip";
+        } else {
+            return address;
+        }
     }
 
 }

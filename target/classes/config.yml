@@ -1,2 +1,8 @@
-Resource Pack Server:
-  Port: 301
+Resource Pack:
+  Download Link: ""
+  # If you wish to locally store the resource pack setup the parameters below
+  Server:
+    Enabled: False
+    Address: "localhost"
+    Port: 301
+
