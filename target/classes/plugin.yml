@@ -1,0 +1,7 @@
+name: Insomnia
+version: 0.1-ALPHA-b43
+main: dev.qruet.insomnia.Insomnia
+author: qruet
+description: 
+api-version: 1.13
+prefix: Insomnia

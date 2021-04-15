@@ -26,7 +26,7 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.2.0</version>
                 <configuration>
-                    <outputDirectory>C:/Users/Geekles/Desktop</outputDirectory>
+                    <outputDirectory>S:\Development\Minecraft\Server\Instances\Dev-1.16\plugins\update</outputDirectory>
                 </configuration>
             </plugin>
             <plugin>
@@ -74,7 +74,7 @@
                         <configuration>
                             <artifactSet>
                                 <includes>
-                                    <include>org.scijava</include>
+                                    <include>io.vertx</include>
                                 </includes>
                             </artifactSet>
                         </configuration>
@@ -87,6 +87,7 @@
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
                 <includes>
+                    <include>config.yml</include>
                     <include>plugin.yml</include>
                 </includes>
             </resource>
@@ -116,9 +117,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.scijava</groupId>
-            <artifactId>jep</artifactId>
-            <version>2.4.2</version>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-web</artifactId>
+            <version>4.0.3</version>
         </dependency>
     </dependencies>
 
