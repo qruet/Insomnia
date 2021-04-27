@@ -8,7 +8,11 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import net.minecraft.server.v1_16_R3.*;
+import net.minecraft.server.v1_16_R3.MobEffects;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
 
 public class MobEffectInsomnia extends net.minecraft.server.v1_16_R3.MobEffectList {
 
@@ -20,15 +24,23 @@ public class MobEffectInsomnia extends net.minecraft.server.v1_16_R3.MobEffectLi
         super(mobeffectinfo, color);
     }
 
-    // this function never seems to get called which is a bit odd
+    // This function gets called when effect is removed
     @Override
-    public void tick(EntityLiving entityliving, int i) {
-        if (this == MobEffects.INSOMNIA) {
-            Bukkit.broadcastMessage("Entity, " + entityliving.getName() + " has insomnia effect!");
-        } else {
-            super.tick(entityliving, i);
-        }
+    public void a(EntityLiving entityliving, AttributeMapBase attributemapbase, int i) {
+        super.a(entityliving, attributemapbase, i);
+    }
 
+    // This function gets called when effect is added
+    @Override
+    public void b(EntityLiving entityliving, AttributeMapBase attributemapbase, int i) {
+        super.b(entityliving, attributemapbase, i);
+        if(entityliving == null)
+            return;
+        LivingEntity entity = entityliving.getBukkitLivingEntity();
+        if(entity instanceof Player) {
+            Player player = (Player) entity;
+            Bukkit.broadcastMessage(player.getName() + " just got insomnia!");
+        }
     }
 
 }

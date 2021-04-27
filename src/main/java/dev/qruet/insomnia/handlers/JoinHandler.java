@@ -24,7 +24,6 @@ public class JoinHandler implements Listener {
         }
 
         player.setResourcePack(address);
-        player.addPotionEffect(new PotionEffect(PotionEffectType.INSOMNIA, 999, 1, true, true, true));
     }
 
 }
