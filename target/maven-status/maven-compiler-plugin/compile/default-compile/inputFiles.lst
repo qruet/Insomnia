@@ -1,8 +1,10 @@
 C:\Users\Geekles\IdeaProjects\Insomnia\src\main\java\dev\qruet\insomnia\handlers\SleepHandler.java
 C:\Users\Geekles\IdeaProjects\Insomnia\src\main\java\dev\qruet\insomnia\nms\entity\EntityInsomniaPhantom.java
+C:\Users\Geekles\IdeaProjects\Insomnia\src\main\java\dev\qruet\insomnia\nms\entity\pathfinder\CirclePathfinderGoal.java
 C:\Users\Geekles\IdeaProjects\Insomnia\src\main\java\dev\qruet\insomnia\nms\effect\MobEffects.java
 C:\Users\Geekles\IdeaProjects\Insomnia\src\main\java\dev\qruet\insomnia\nms\effect\MobEffectInsomnia.java
 C:\Users\Geekles\IdeaProjects\Insomnia\src\main\java\dev\qruet\insomnia\io\config\ConfigIO.java
+C:\Users\Geekles\IdeaProjects\Insomnia\src\main\java\dev\qruet\insomnia\nms\entity\pathfinder\TargetPathfinderGoal.java
 C:\Users\Geekles\IdeaProjects\Insomnia\src\main\java\dev\qruet\insomnia\effect\PotionEffectType.java
 C:\Users\Geekles\IdeaProjects\Insomnia\src\main\java\dev\qruet\insomnia\http\WebServerHandler.java
 C:\Users\Geekles\IdeaProjects\Insomnia\src\main\java\dev\qruet\insomnia\misc\ReflectionUtils.java
@@ -13,5 +15,9 @@ C:\Users\Geekles\IdeaProjects\Insomnia\src\main\java\dev\qruet\insomnia\misc\Tas
 C:\Users\Geekles\IdeaProjects\Insomnia\src\main\java\dev\qruet\insomnia\handlers\JoinHandler.java
 C:\Users\Geekles\IdeaProjects\Insomnia\src\main\java\dev\qruet\insomnia\misc\math\MeanSquaredError.java
 C:\Users\Geekles\IdeaProjects\Insomnia\src\main\java\dev\qruet\insomnia\nms\EntityTypeRegistry.java
+C:\Users\Geekles\IdeaProjects\Insomnia\src\main\java\dev\qruet\insomnia\nms\entity\pathfinder\IdlePathfinderGoal.java
 C:\Users\Geekles\IdeaProjects\Insomnia\src\main\java\dev\qruet\insomnia\misc\math\Normalize.java
+C:\Users\Geekles\IdeaProjects\Insomnia\src\main\java\dev\qruet\insomnia\nms\entity\controller\PhantomControllerMove.java
+C:\Users\Geekles\IdeaProjects\Insomnia\src\main\java\dev\qruet\insomnia\nms\entity\pathfinder\AttackPathfinderGoal.java
 C:\Users\Geekles\IdeaProjects\Insomnia\src\main\java\dev\qruet\insomnia\io\texture\ResourcePackIO.java
+C:\Users\Geekles\IdeaProjects\Insomnia\src\main\java\dev\qruet\insomnia\nms\entity\controller\PhantomControllerLook.java
