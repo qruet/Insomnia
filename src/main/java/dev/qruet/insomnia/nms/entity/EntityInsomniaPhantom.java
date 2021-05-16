@@ -2,11 +2,10 @@ package dev.qruet.insomnia.nms.entity;
 
 import dev.qruet.insomnia.nms.entity.controller.PhantomControllerLook;
 import dev.qruet.insomnia.nms.entity.controller.PhantomControllerMove;
-import dev.qruet.insomnia.nms.entity.pathfinder.AttackPathfinderGoal;
-import dev.qruet.insomnia.nms.entity.pathfinder.CirclePathfinderGoal;
-import dev.qruet.insomnia.nms.entity.pathfinder.IdlePathfinderGoal;
-import dev.qruet.insomnia.nms.entity.pathfinder.TargetPathfinderGoal;
+import dev.qruet.insomnia.nms.entity.pathfinder.*;
 import net.minecraft.server.v1_16_R3.*;
+import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 
 public class EntityInsomniaPhantom extends net.minecraft.server.v1_16_R3.EntityPhantom {
 
@@ -14,7 +13,9 @@ public class EntityInsomniaPhantom extends net.minecraft.server.v1_16_R3.EntityP
     public BlockPosition d;
     protected AttackPhase phase;
 
-    public EntityInsomniaPhantom(AttackPhase phase, World world) {
+    protected Player target;
+
+    public EntityInsomniaPhantom(AttackPhase phase, World world, Player target) {
         super(EntityTypes.PHANTOM, world);
         this.phase = phase;
         this.d = BlockPosition.ZERO;
@@ -26,14 +27,21 @@ public class EntityInsomniaPhantom extends net.minecraft.server.v1_16_R3.EntityP
         this.goalSelector.getTasks().clear();
         this.targetSelector.getTasks().clear();
 
-        this.goalSelector.a(1, new IdlePathfinderGoal(this));
+        //this.goalSelector.a(1, new IdlePathfinderGoal(this));
+        this.goalSelector.a(1, new LightPathfinderGoal(this));
+        this.goalSelector.a(2, new GustPathfinderGoal(this));
         this.goalSelector.a(2, new AttackPathfinderGoal(this));
         this.goalSelector.a(3, new CirclePathfinderGoal(this));
         this.targetSelector.a(1, new TargetPathfinderGoal(this));
+
+        this.target = target;
+        this.noclip = true;//target != null;
+
+        this.setPersistent();
     }
 
     public EntityInsomniaPhantom(EntityTypes<Entity> entityTypes, World world) {
-        this(AttackPhase.CIRCLE, world);
+        this(AttackPhase.CIRCLE, world, null);
     }
 
     @Override
@@ -52,6 +60,15 @@ public class EntityInsomniaPhantom extends net.minecraft.server.v1_16_R3.EntityP
     public void movementTick() {
         super.movementTick();
         this.setFireTicks(0); // disable fire
+    }
+
+    public void disappear() {
+        if (target != null)
+            target.playSound(origin, Sound.ENTITY_PHANTOM_DEATH, 0f, 1f);
+        else
+            world.getWorld().playSound(origin, Sound.ENTITY_PHANTOM_DEATH, 0f, 1f);
+        world.getWorld().spawnParticle(org.bukkit.Particle.CLOUD, getBukkitEntity().getLocation(), 20, 0, 0, 0, 0.2);
+        die();
     }
 
     public void setCurrentPhase(AttackPhase phase) {

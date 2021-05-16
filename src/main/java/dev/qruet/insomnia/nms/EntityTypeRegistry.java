@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public enum EntityTypeRegistry {
 
-    INSOMNIA_PHANTOM("phantom", EntityTypes.PHANTOM, EntityInsomniaPhantom.class, EntityInsomniaPhantom::new);
+    INSOMNIA_PHANTOM("ghost", EntityTypes.PHANTOM, EntityInsomniaPhantom.class, EntityInsomniaPhantom::new);
 
     private String name;
     private EntityTypes<? extends EntityInsentient> entityType;
@@ -54,16 +54,20 @@ public enum EntityTypeRegistry {
     @SuppressWarnings("unchecked")
     public static void unregisterEntities() {
         for (EntityTypeRegistry entity : values()) {
-            MinecraftKey minecraftKey = MinecraftKey.a(entity.name);
-
-            Map<Object, Type<?>> typeMap = (Map<Object, Type<?>>) DataConverterRegistry.a()
-                    .getSchema(DataFixUtils.makeKey(SharedConstants.getGameVersion().getWorldVersion()))
-                    .findChoiceType(DataConverterTypes.ENTITY)
-                    .types();
-            typeMap.remove(minecraftKey.toString());
-
-            Insomnia.logger().info("Unregistered Entity with name \"" + entity.name + "\" and key \"" + minecraftKey.toString() + "\"");
+            unregisterEntity(entity.name);
         }
+    }
+
+    public static void unregisterEntity(String name) {
+        MinecraftKey minecraftKey = MinecraftKey.a(name);
+
+        Map<Object, Type<?>> typeMap = (Map<Object, Type<?>>) DataConverterRegistry.a()
+                .getSchema(DataFixUtils.makeKey(SharedConstants.getGameVersion().getWorldVersion()))
+                .findChoiceType(DataConverterTypes.ENTITY)
+                .types();
+        typeMap.remove(minecraftKey);
+
+        Insomnia.logger().info("Unregistered Entity with name \"" + name + "\" and key \"" + minecraftKey + "\"");
     }
 
     @SuppressWarnings("unchecked")
@@ -74,10 +78,11 @@ public enum EntityTypeRegistry {
                 .findChoiceType(DataConverterTypes.ENTITY)
                 .types();
         String k = "minecraft:" + EntityTypes.getName(type.entityType).getKey();
-        typeMap.put(minecraftKey.toString(), typeMap.get(k));
+        typeMap.put(minecraftKey, typeMap.get(k));
         EntityTypes.Builder<Entity> entityBuilder = EntityTypes.Builder.a(type.b, EnumCreatureType.CREATURE);
+
         IRegistry.a(IRegistry.ENTITY_TYPE, type.name, entityBuilder.a(type.name));
 
-        Insomnia.logger().info("Registered Entity with name \"" + type.getName() + "\" and key \"" + minecraftKey.toString() + "\"");
+        Insomnia.logger().info("Registered Entity with name \"" + type.getName() + "\" and key \"" + minecraftKey + "\"");
     }
 }

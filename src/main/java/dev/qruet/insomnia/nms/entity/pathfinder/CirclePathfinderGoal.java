@@ -26,24 +26,24 @@ public class CirclePathfinderGoal extends PathfinderGoal {
      * @return
      */
     public boolean a() {
-        return phantom.getGoalTarget() == null || phantom.getCurrentPhase() == EntityInsomniaPhantom.AttackPhase.CIRCLE;
+        return  phantom.getGoalTarget() == null || phantom.getCurrentPhase() == EntityInsomniaPhantom.AttackPhase.CIRCLE;
     }
 
     public void c() {
-        this.d = 5.0F + phantom.getRandom().nextFloat() * 10.0F;
+        this.d = 80.0F + phantom.getRandom().nextFloat() * 15.0F;
         this.e = -4.0F + phantom.getRandom().nextFloat() * 9.0F;
         this.f = phantom.getRandom().nextBoolean() ? 1.0F : -1.0F;
         this.h();
     }
 
     public void e() {
-        if (phantom.getRandom().nextInt(350) == 0) {
+        if (phantom.getRandom().nextInt(250) == 0) {
             this.e = -4.0F + phantom.getRandom().nextFloat() * 9.0F;
         }
 
         if (phantom.getRandom().nextInt(250) == 0) {
             ++this.d;
-            if (this.d > 15.0F) {
+            if (this.d > 35.0F) {
                 this.d = 5.0F;
                 this.f = -this.f;
             }
@@ -68,6 +68,10 @@ public class CirclePathfinderGoal extends PathfinderGoal {
             this.h();
         }
 
+        if(phantom.locY() < 100) {
+            this.e += (float) (100.0f - phantom.locY()) * 0.017453292F;
+        }
+
     }
 
     private void h() {
@@ -75,7 +79,7 @@ public class CirclePathfinderGoal extends PathfinderGoal {
             phantom.d = phantom.getChunkCoordinates();
         }
 
-        this.c += this.f * 15.0F * 0.017453292F;
+        this.c += this.f * 45.0F * 0.017453292F;
         phantom.c = Vec3D.b(phantom.d).add((double) (this.d * MathHelper.cos(this.c)), (double) (-4.0F + this.e), (double) (this.d * MathHelper.sin(this.c)));
     }
 

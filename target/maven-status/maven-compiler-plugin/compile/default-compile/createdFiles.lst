@@ -15,9 +15,12 @@ dev\qruet\insomnia\handlers\JoinHandler.class
 dev\qruet\insomnia\nms\effect\MobEffectInsomnia.class
 dev\qruet\insomnia\nms\entity\EntityInsomniaPhantom.class
 dev\qruet\insomnia\data\BedTracker$BedDataNode.class
+dev\qruet\insomnia\nms\entity\pathfinder\GustPathfinderGoal.class
+dev\qruet\insomnia\nms\entity\pathfinder\LightPathfinderGoal.class
 dev\qruet\insomnia\effect\PotionEffectType$InsomniaPotionEffectTypeWrapper.class
 dev\qruet\insomnia\misc\math\Normalize.class
 dev\qruet\insomnia\misc\Tasky$3.class
+dev\qruet\insomnia\effect\block\LightExtinguish.class
 dev\qruet\insomnia\Insomnia.class
 dev\qruet\insomnia\misc\Tasky$5.class
 dev\qruet\insomnia\io\config\ConfigIO.class

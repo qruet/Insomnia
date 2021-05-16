@@ -17,7 +17,9 @@ public class IdlePathfinderGoal extends PathfinderGoal {
 
     public boolean a() {
         EntityLiving entityliving = phantom.getGoalTarget();
-        return entityliving != null && phantom.a(phantom.getGoalTarget(), PathfinderTargetCondition.a);
+        boolean f = entityliving != null && phantom.a(phantom.getGoalTarget(), PathfinderTargetCondition.a);
+        Bukkit.broadcastMessage("IdlePathfinderGoal#a() = " + f);
+        return false;
     }
 
     public void c() {
@@ -27,7 +29,7 @@ public class IdlePathfinderGoal extends PathfinderGoal {
     }
 
     public void d() {
-        phantom.d = phantom.world.getHighestBlockYAt(net.minecraft.server.v1_16_R3.HeightMap.Type.MOTION_BLOCKING, phantom.d).up(10 + phantom.getRandom().nextInt(20));
+        //phantom.d = phantom.world.getHighestBlockYAt(net.minecraft.server.v1_16_R3.HeightMap.Type.MOTION_BLOCKING, phantom.d).up(10 + phantom.getRandom().nextInt(20));
     }
 
     public void e() {
@@ -36,7 +38,7 @@ public class IdlePathfinderGoal extends PathfinderGoal {
             if (this.b <= 0) {
                 phantom.setCurrentPhase(EntityInsomniaPhantom.AttackPhase.SWOOP);
                 this.g();
-                this.b = (8 + phantom.getRandom().nextInt(4)) * 20;
+                //this.b = (8 + phantom.getRandom().nextInt(4)) * 20;
                 phantom.playSound(SoundEffects.ENTITY_PHANTOM_SWOOP, 10.0F, 0.95F + phantom.getRandom().nextFloat() * 0.1F);
             }
         }
@@ -44,10 +46,10 @@ public class IdlePathfinderGoal extends PathfinderGoal {
     }
 
     private void g() {
-        phantom.d = phantom.getGoalTarget().getChunkCoordinates().up(20 + phantom.getRandom().nextInt(20));
+        /*phantom.d = phantom.getGoalTarget().getChunkCoordinates().up(20 + phantom.getRandom().nextInt(20));
         if (phantom.d.getY() < phantom.world.getSeaLevel()) {
             phantom.d = new BlockPosition(phantom.d.getX(), phantom.world.getSeaLevel() + 1, phantom.d.getZ());
-        }
+        }*/
 
     }
 
