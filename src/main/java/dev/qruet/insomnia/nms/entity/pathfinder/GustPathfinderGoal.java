@@ -18,7 +18,7 @@ public class GustPathfinderGoal extends PathfinderGoal {
 
     private static final List<Material> EXTINGUISHABLE_BLOCKS = Arrays.asList(Material.TORCH, Material.WALL_TORCH);
 
-    private double lastY;
+    private int c = 0;
 
     public GustPathfinderGoal(EntityInsomniaPhantom phantom) {
         super();
@@ -26,34 +26,46 @@ public class GustPathfinderGoal extends PathfinderGoal {
     }
 
     /**
-     * Called to determine whether pathfindergoal should be ticked
+     * Called to determine whether PathfinderGoal should be ticked
      *
      * @return
      */
     public boolean a() {
-        boolean f = phantom.getMot().y - lastY >= 0.15f;
-        this.lastY = phantom.getMot().y;
-        return f;
+        return phantom.getCurrentPhase() == EntityInsomniaPhantom.AttackPhase.GUST;
     }
 
-    public void e() {
+    /**
+     * Called when {@link #a()} returns true for the first time
+     */
+    public void c() {
+        this.c = 60;
+
         Location location = phantom.getBukkitEntity().getLocation();
         Vector dir = location.getDirection().normalize();
 
-        Location origin = location.clone().add(dir.getX() * 3, -5, dir.getZ() * 3);
+        Location origin = location.clone().add(dir.getX() * 3, -2, dir.getZ() * 3);
         phantom.world.getWorld().spawnParticle(Particle.CLOUD, location.clone().add(dir.getX() * 1.5, -2, dir.getZ() * 1.5), 35, 1, 0, 1, 0.15);
 
         for (int dx = -2; dx <= 2; dx++) {
             for (int dy = -2; dy <= 2; dy++) {
                 for (int dz = -2; dz <= 2; dz++) {
                     org.bukkit.block.Block block = origin.clone().add(dx, dy, dz).getBlock();
-                    if (block.getLocation().distance(origin) <= 1.5) {
+                    if (block.getLocation().distance(origin) <= 2) {
                         if (EXTINGUISHABLE_BLOCKS.contains(block.getType())) {
                             LightExtinguish.playEffect(block);
                         }
                     }
                 }
             }
+        }
+    }
+
+    public void e() {
+        if (c > 0) {
+            c--;
+            phantom.c = Vec3D.b(phantom.d).add(phantom.c.x * 0.1, 100D, phantom.c.z * 0.1);
+        } else {
+            phantom.setCurrentPhase(EntityInsomniaPhantom.AttackPhase.CIRCLE);
         }
     }
 

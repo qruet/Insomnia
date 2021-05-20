@@ -3,13 +3,7 @@ package dev.qruet.insomnia.nms.entity.pathfinder;
 import dev.qruet.insomnia.effect.block.LightExtinguish;
 import dev.qruet.insomnia.nms.entity.EntityInsomniaPhantom;
 import net.minecraft.server.v1_16_R3.*;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.v1_16_R3.block.CraftBlock;
-import org.bukkit.craftbukkit.v1_16_R3.block.data.CraftBlockData;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -52,9 +46,6 @@ public class AttackPathfinderGoal extends PathfinderGoal {
 
             return true;
         }
-    }
-
-    public void c() {
     }
 
     public void d() {

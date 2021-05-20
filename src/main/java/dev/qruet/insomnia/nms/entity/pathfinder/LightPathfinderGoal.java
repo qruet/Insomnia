@@ -18,8 +18,6 @@ public class LightPathfinderGoal extends PathfinderGoal {
 
     private static final List<Material> LIGHT_EMITTING_BLOCKS = Arrays.asList(Material.TORCH, Material.WALL_TORCH);
 
-    private boolean lE;
-
     public LightPathfinderGoal(EntityInsomniaPhantom phantom) {
         super();
         this.phantom = phantom;
@@ -31,6 +29,9 @@ public class LightPathfinderGoal extends PathfinderGoal {
      * @return
      */
     public boolean a() {
+        if (phantom.getCurrentPhase() == EntityInsomniaPhantom.AttackPhase.GUST)
+            return false;
+
         for (int dx = -3; dx <= 3; dx++) {
             for (int dy = -3; dy <= 3; dy++) {
                 for (int dz = -3; dz <= 3; dz++) {
@@ -41,17 +42,12 @@ public class LightPathfinderGoal extends PathfinderGoal {
                 }
             }
         }
-        lE = false;
         return false;
     }
 
-    public void e() {
-        phantom.c = Vec3D.b(phantom.d).add(phantom.c.x * 0.25, 1000D, phantom.c.z * 0.25);
-        if (!lE) {
-            phantom.world.getWorld().playSound(phantom.getBukkitEntity().getLocation(), Sound.ENTITY_VEX_DEATH, 1.5f, 0.0f);
-            phantom.setCurrentPhase(EntityInsomniaPhantom.AttackPhase.CIRCLE);
-            lE = true;
-        }
+    public void c() {
+        phantom.world.getWorld().playSound(phantom.getBukkitEntity().getLocation(), Sound.ENTITY_VEX_DEATH, 1.5f, 0.0f);
+        phantom.setCurrentPhase(EntityInsomniaPhantom.AttackPhase.GUST);
     }
 
 }

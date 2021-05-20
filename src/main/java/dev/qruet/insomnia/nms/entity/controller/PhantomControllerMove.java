@@ -63,11 +63,6 @@ public class PhantomControllerMove extends ControllerMove {
 
         Vec3D vec3d = phantom.getMot(); // current motion vector
         phantom.setMot(vec3d.e((new Vec3D(d3, d4, d5)).d(vec3d).a(0.2D)));
-
-        if(phantom.getMot().y < -0.2 || phantom.getMot().y > 0.2) {
-            phantom.world.getWorld().spawnParticle(Particle.END_ROD,
-                    phantom.getBukkitEntity().getLocation(), 1, 0, 0.1, 0, 0);
-        }
     }
 
 }

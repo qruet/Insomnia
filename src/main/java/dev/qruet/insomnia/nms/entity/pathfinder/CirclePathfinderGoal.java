@@ -26,7 +26,7 @@ public class CirclePathfinderGoal extends PathfinderGoal {
      * @return
      */
     public boolean a() {
-        return  phantom.getGoalTarget() == null || phantom.getCurrentPhase() == EntityInsomniaPhantom.AttackPhase.CIRCLE;
+        return phantom.getGoalTarget() == null || phantom.getCurrentPhase() == EntityInsomniaPhantom.AttackPhase.CIRCLE;
     }
 
     public void c() {
@@ -68,7 +68,7 @@ public class CirclePathfinderGoal extends PathfinderGoal {
             this.h();
         }
 
-        if(phantom.locY() < 100) {
+        if (phantom.locY() < 100) {
             this.e += (float) (100.0f - phantom.locY()) * 0.017453292F;
         }
 
