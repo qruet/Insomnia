@@ -62,8 +62,7 @@ public class EntityTypeHandler implements Listener {
         Entity custom = registry.transformEntity(entity);
         Validate.notNull(custom, "Failed to transform entity for " + registry.getCustomClass().getName());
 
-        entity.setSilent(true);
-        entity.killEntity();
+        entity.die();
 
         custom.world.addEntity(custom, CreatureSpawnEvent.SpawnReason.CUSTOM);
         return true;

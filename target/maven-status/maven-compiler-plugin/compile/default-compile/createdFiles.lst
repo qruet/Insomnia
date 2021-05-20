@@ -4,6 +4,7 @@ dev\qruet\insomnia\data\BedTracker.class
 dev\qruet\insomnia\handlers\SleepHandler.class
 dev\qruet\insomnia\nms\effect\MobEffects.class
 dev\qruet\insomnia\misc\Tasky$4.class
+dev\qruet\insomnia\server\Server.class
 dev\qruet\insomnia\misc\Tasky$2.class
 dev\qruet\insomnia\nms\entity\EntityInsomniaPhantom$AttackPhase.class
 dev\qruet\insomnia\nms\EntityTypeRegistry.class
@@ -21,16 +22,19 @@ dev\qruet\insomnia\nms\entity\pathfinder\LightPathfinderGoal.class
 dev\qruet\insomnia\effect\PotionEffectType$InsomniaPotionEffectTypeWrapper.class
 dev\qruet\insomnia\misc\math\Normalize.class
 dev\qruet\insomnia\misc\Tasky$3.class
+dev\qruet\insomnia\server\world\World.class
 dev\qruet\insomnia\effect\block\LightExtinguish.class
 dev\qruet\insomnia\Insomnia.class
 dev\qruet\insomnia\misc\Tasky$5.class
 dev\qruet\insomnia\io\config\ConfigIO.class
 dev\qruet\insomnia\misc\Tasky$1.class
 dev\qruet\insomnia\nms\entity\controller\PhantomControllerLook.class
+dev\qruet\insomnia\nms\packet\PacketHandler$1.class
 dev\qruet\insomnia\misc\ReflectionUtils.class
 dev\qruet\insomnia\nms\entity\pathfinder\TargetPathfinderGoal.class
 dev\qruet\insomnia\nms\entity\pathfinder\CirclePathfinderGoal.class
 dev\qruet\insomnia\effect\PotionEffectType.class
+dev\qruet\insomnia\nms\packet\PacketHandler.class
 dev\qruet\insomnia\io\playerdata\PlayerDataIO.class
 dev\qruet\insomnia\misc\math\MeanSquaredError.class
 dev\qruet\insomnia\nms\entity\pathfinder\IdlePathfinderGoal.class

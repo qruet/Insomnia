@@ -2,10 +2,8 @@ package dev.qruet.insomnia.effect;
 
 import dev.qruet.insomnia.misc.ReflectionUtils;
 import dev.qruet.insomnia.nms.effect.MobEffects;
-import net.minecraft.server.v1_16_R3.MobEffectList;
 import org.bukkit.Color;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -60,12 +58,10 @@ public abstract class PotionEffectType extends org.bukkit.potion.PotionEffectTyp
             return this.getType().getDurationModifier();
         }
 
-        @NotNull
         public String getName() {
             return this.getType().getName();
         }
 
-        @NotNull
         public org.bukkit.potion.PotionEffectType getType() {
             return PotionEffectType.getById(getId());
         }
@@ -74,7 +70,6 @@ public abstract class PotionEffectType extends org.bukkit.potion.PotionEffectTyp
             return this.getType().isInstant();
         }
 
-        @NotNull
         public Color getColor() {
             return this.getType().getColor();
         }

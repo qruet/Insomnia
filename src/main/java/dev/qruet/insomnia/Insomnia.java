@@ -9,7 +9,10 @@ import dev.qruet.insomnia.io.config.ConfigIO;
 import dev.qruet.insomnia.misc.Tasky;
 import dev.qruet.insomnia.nms.EntityTypeHandler;
 import dev.qruet.insomnia.nms.EntityTypeRegistry;
+import dev.qruet.insomnia.nms.packet.PacketHandler;
+import dev.qruet.insomnia.server.Server;
 import org.bukkit.Bukkit;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
@@ -21,6 +24,7 @@ public class Insomnia extends JavaPlugin {
 
     private WebServerHandler httpHandler;
     private EntityTypeHandler entityHandler;
+    private PacketHandler packetHandler;
 
     public void onEnable() {
         logger = getLogger();
@@ -35,8 +39,13 @@ public class Insomnia extends JavaPlugin {
             this.httpHandler.start();
         }
 
+        Server.init(this);
+
         entityHandler = new EntityTypeHandler();
+        packetHandler = new PacketHandler();
+
         Bukkit.getPluginManager().registerEvents(entityHandler, this);
+        Bukkit.getPluginManager().registerEvents(packetHandler, this);
 
         PotionEffectType.setup(this);
 
@@ -46,11 +55,13 @@ public class Insomnia extends JavaPlugin {
     }
 
     public void onDisable() {
+        HandlerList.unregisterAll(entityHandler);
+        HandlerList.unregisterAll(packetHandler);
+
+        packetHandler.disable();
         config.serialize();
         if (this.httpHandler != null)
             this.httpHandler.stop();
-
-        //EntityTypeRegistry.unregisterEntities();
     }
 
     public WebServerHandler getHTTPServer() {

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
+import dev.qruet.insomnia.server.Server;
 import net.minecraft.server.v1_16_R3.*;
 import net.minecraft.server.v1_16_R3.MobEffects;
 import org.bukkit.Bukkit;
@@ -18,7 +19,7 @@ public class MobEffectInsomnia extends net.minecraft.server.v1_16_R3.MobEffectLi
 
     /**
      * @param mobeffectinfo
-     * @param color Hexadecimal color code in decimal form
+     * @param color         Hexadecimal color code in decimal form
      */
     public MobEffectInsomnia(MobEffectInfo mobeffectinfo, int color) {
         super(mobeffectinfo, color);
@@ -34,12 +35,13 @@ public class MobEffectInsomnia extends net.minecraft.server.v1_16_R3.MobEffectLi
     @Override
     public void b(EntityLiving entityliving, AttributeMapBase attributemapbase, int i) {
         super.b(entityliving, attributemapbase, i);
-        if(entityliving == null)
+        if (entityliving == null)
             return;
-        LivingEntity entity = entityliving.getBukkitLivingEntity();
-        if(entity instanceof Player) {
+
+        LivingEntity entity = (LivingEntity) entityliving.getBukkitEntity();
+        if (entity instanceof Player) {
             Player player = (Player) entity;
-            Bukkit.broadcastMessage(player.getName() + " just got insomnia!");
+            Server.getWorld(player.getWorld().getUID()).spawnInsomniaPhantom(player, i);
         }
     }
 

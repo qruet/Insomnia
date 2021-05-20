@@ -103,13 +103,13 @@
     </scm>
 
     <dependencies>
-        <dependency>
+        <!--<dependency>
             <artifactId>org.papermc</artifactId>
             <groupId>papermc</groupId>
             <version>1.0</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/resources/jar/patched_1.16.5.jar</systemPath>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
@@ -130,5 +130,5 @@
         </repository>
     </repositories>
 
-    
+
 </project>

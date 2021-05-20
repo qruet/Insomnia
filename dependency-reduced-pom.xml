@@ -94,13 +94,6 @@
       <version>1.16.5-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>papermc</groupId>
-      <artifactId>org.papermc</artifactId>
-      <version>1.0</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/src/main/resources/jar/patched_1.16.5.jar</systemPath>
-    </dependency>
   </dependencies>
   <properties>
     <buildNo>${buildNumber}</buildNo>

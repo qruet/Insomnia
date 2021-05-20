@@ -6,17 +6,19 @@ import dev.qruet.insomnia.misc.Tasky;
 import dev.qruet.insomnia.nms.entity.controller.PhantomControllerLook;
 import dev.qruet.insomnia.nms.entity.controller.PhantomControllerMove;
 import dev.qruet.insomnia.nms.entity.pathfinder.*;
+import dev.qruet.insomnia.server.Server;
 import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
-import org.slf4j.Logger;
 
 import java.lang.reflect.Field;
 import java.util.UUID;
@@ -41,14 +43,19 @@ public class EntityInsomniaPhantom extends net.minecraft.server.v1_16_R3.EntityP
         this.moveController = new PhantomControllerMove(this);
         this.lookController = new PhantomControllerLook(this);
 
-        this.goalSelector.getTasks().clear();
-        this.targetSelector.getTasks().clear();
+        this.goalSelector = new PathfinderGoalSelector(world.getMethodProfilerSupplier());
+        this.targetSelector = new PathfinderGoalSelector(world.getMethodProfilerSupplier());
 
         this.level = -1;
 
         this.setPersistent();
     }
 
+    /**
+     * Responsible for copying data from {@link Entity} into a new {@link EntityInsomniaPhantom} instance.
+     *
+     * @param entity
+     */
     public EntityInsomniaPhantom(Entity entity) {
         this(entity.world);
 
@@ -60,8 +67,18 @@ public class EntityInsomniaPhantom extends net.minecraft.server.v1_16_R3.EntityP
         tag = entity.save(tag); // populate NBTTagCompound with entity NBT data
 
         loadData(tag);
+
+        Server.getWorld(world.getWorld().getUID()).addPhantom(this);
     }
 
+    /**
+     * This constructor is utilized to instantiate a ghost type {@link EntityInsomniaPhantom} instance
+     *
+     * @param phase  Initial AttackPhase for ghost
+     * @param world  World to initialize entity into
+     * @param target Player the phantom "haunts"
+     * @param level  Entity difficulty
+     */
     public EntityInsomniaPhantom(AttackPhase phase, World world, Player target, int level) {
         this(world);
         this.phase = phase;
@@ -69,21 +86,34 @@ public class EntityInsomniaPhantom extends net.minecraft.server.v1_16_R3.EntityP
         this.target = target;
         this.level = MathHelper.clamp(level, 0, 4);
 
-        this.noclip = true;
+        if (level <= 0) {
+            this.setSize(-4);
+        } else {
+            this.setSize(-3);
+        }
+
+        this.noclip = true; // only ghosts can clip through walls
 
         this.container = getBukkitEntity().getPersistentDataContainer();
-        //this.goalSelector.a(1, new IdlePathfinderGoal(this));
 
-        setNoAI(true);
-        setNoGravity(true);
-
-        /*this.goalSelector.a(1, new LightPathfinderGoal(this));
+        this.goalSelector.a(1, new LightPathfinderGoal(this));
         this.goalSelector.a(2, new GustPathfinderGoal(this));
         this.goalSelector.a(2, new AttackPathfinderGoal(this));
         this.goalSelector.a(3, new CirclePathfinderGoal(this));
-        this.targetSelector.a(1, new TargetPathfinderGoal(this));*/
+        this.targetSelector.a(1, new TargetPathfinderGoal(this));
+
+        if (target == null)
+            return;
+
+        setGoalTarget(((CraftPlayer) target).getHandle(), EntityTargetEvent.TargetReason.CUSTOM, false);
     }
 
+    /**
+     * This constructor is utilized to instantiate a mortal type {@link EntityInsomniaPhantom} instance
+     *
+     * @param phase Initial AttackPhase for phantom
+     * @param world World to initialize entity into
+     */
     public EntityInsomniaPhantom(AttackPhase phase, World world) {
         this(world);
         this.phase = phase;
@@ -97,6 +127,10 @@ public class EntityInsomniaPhantom extends net.minecraft.server.v1_16_R3.EntityP
 
     public boolean isGhost() {
         return target != null;
+    }
+
+    public Player getTarget() {
+        return target;
     }
 
     @Override
@@ -135,9 +169,9 @@ public class EntityInsomniaPhantom extends net.minecraft.server.v1_16_R3.EntityP
             Location loc1 = new Location(world.getWorld(), this.locX() + (double) f2 + ((-1 * getLookDirection().x)), this.locY() + (double) f4, this.locZ() + (double) f3 + ((-1 * getLookDirection().z)));
             Location loc2 = new Location(world.getWorld(), this.locX() - (double) f2 + ((-1 * getLookDirection().x)), this.locY() + (double) f4, this.locZ() - (double) f3 + ((-1 * getLookDirection().z)));
 
-            world.getWorld().spawnParticle(org.bukkit.Particle.SMOKE_NORMAL, loc, 1, 0, 0, 0, 0);
-            world.getWorld().spawnParticle(org.bukkit.Particle.SMOKE_NORMAL, loc1, 1, 0, 0, 0, 0);
-            world.getWorld().spawnParticle(org.bukkit.Particle.SMOKE_NORMAL, loc2, 1, 0, 0, 0, 0);
+            target.spawnParticle(org.bukkit.Particle.SMOKE_NORMAL, loc, 1, 0, 0, 0, 0);
+            target.spawnParticle(org.bukkit.Particle.SMOKE_NORMAL, loc1, 1, 0, 0, 0, 0);
+            target.spawnParticle(org.bukkit.Particle.SMOKE_NORMAL, loc2, 1, 0, 0, 0, 0);
         }
     }
 
@@ -151,11 +185,17 @@ public class EntityInsomniaPhantom extends net.minecraft.server.v1_16_R3.EntityP
 
     public void disappear() {
         if (target != null)
-            target.playSound(origin, Sound.ENTITY_PHANTOM_DEATH, 0f, 1f);
+            target.playSound(getBukkitEntity().getLocation(), Sound.ENTITY_PHANTOM_DEATH, 0f, 1f);
         else
-            world.getWorld().playSound(origin, Sound.ENTITY_PHANTOM_DEATH, 0f, 1f);
+            world.getWorld().playSound(getBukkitEntity().getLocation(), Sound.ENTITY_PHANTOM_DEATH, 0f, 1f);
         world.getWorld().spawnParticle(org.bukkit.Particle.CLOUD, getBukkitEntity().getLocation(), 20, 0, 0, 0, 0.2);
         die();
+    }
+
+    @Override
+    public void die() {
+        super.die();
+        //Server.getWorld(world.getWorld().getUID()).removePhantom(uniqueID);
     }
 
     @Override
@@ -189,15 +229,13 @@ public class EntityInsomniaPhantom extends net.minecraft.server.v1_16_R3.EntityP
         if (!targetId.isEmpty())
             target = Bukkit.getPlayer(UUID.fromString(targetId));
 
-        setNoAI(true);
-
         setSize(size);
 
-        setFireTicks(0);
+        setFireTicks(0); // disable entity burning
 
         this.level = MathHelper.clamp(level, 0, 4);
 
-        this.noclip = isGhost();
+        this.noclip = isGhost(); // only ghosts can clip through walls
 
         setCurrentPhase(phase);
     }
