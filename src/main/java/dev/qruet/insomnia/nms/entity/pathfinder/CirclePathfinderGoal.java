@@ -30,7 +30,7 @@ public class CirclePathfinderGoal extends PathfinderGoal {
     }
 
     public void c() {
-        this.d = 80.0F + phantom.getRandom().nextFloat() * 15.0F;
+        this.d = 60.0F + phantom.getRandom().nextFloat() * 10.0F;
         this.e = -4.0F + phantom.getRandom().nextFloat() * 9.0F;
         this.f = phantom.getRandom().nextBoolean() ? 1.0F : -1.0F;
         this.h();
@@ -68,8 +68,11 @@ public class CirclePathfinderGoal extends PathfinderGoal {
             this.h();
         }
 
-        if (phantom.locY() < 100) {
-            this.e += (float) (100.0f - phantom.locY()) * 0.017453292F;
+        if (phantom.isGhost()) {
+            double dY = phantom.getTarget().getLocation().getY() + 25;
+            if (phantom.locY() < dY) {
+                this.e += (float) (dY - phantom.locY()) * 0.25;
+            }
         }
 
     }

@@ -4,6 +4,7 @@ import dev.qruet.insomnia.effect.block.LightExtinguish;
 import dev.qruet.insomnia.nms.entity.EntityInsomniaPhantom;
 import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Sound;
+import org.bukkit.event.entity.EntityTargetEvent;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -11,6 +12,8 @@ import java.util.stream.Collectors;
 public class AttackPathfinderGoal extends PathfinderGoal {
 
     private final EntityInsomniaPhantom phantom;
+    private int tB;
+    private int pL;
 
     public AttackPathfinderGoal(EntityInsomniaPhantom phantom) {
         super();
@@ -48,11 +51,22 @@ public class AttackPathfinderGoal extends PathfinderGoal {
         }
     }
 
+    public void c() {
+        tB = phantom.ticksLived;
+        pL = phantom.getRandom().nextInt(300) + 200;
+    }
+
     public void d() {
         //phantom.disappear();
     }
 
     public void e() {
+        if (phantom.ticksLived - tB > pL) {
+            phantom.setGoalTarget(null, EntityTargetEvent.TargetReason.FORGOT_TARGET, true);
+            phantom.setCurrentPhase(EntityInsomniaPhantom.AttackPhase.CIRCLE);
+            return;
+        }
+
         EntityLiving entityliving = phantom.getGoalTarget();
         phantom.c = new Vec3D(entityliving.locX(), entityliving.e(0.5D), entityliving.locZ());
         if (phantom.getBoundingBox().g(0.20000000298023224D).c(entityliving.getBoundingBox())) {

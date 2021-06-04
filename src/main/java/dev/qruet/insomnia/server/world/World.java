@@ -1,35 +1,44 @@
 package dev.qruet.insomnia.server.world;
 
 import dev.qruet.insomnia.Insomnia;
+import dev.qruet.insomnia.effect.PotionEffectType;
+import dev.qruet.insomnia.effect.insomnia.InsomniaEffect;
+import dev.qruet.insomnia.effect.render.GhostRenderer;
 import dev.qruet.insomnia.nms.entity.EntityInsomniaPhantom;
-import net.minecraft.server.v1_16_R3.EntityPlayer;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.UUID;
 
 public class World {
 
     private final UUID worldId;
-    private final Map<UUID, EntityInsomniaPhantom> phantomMap = new HashMap<>();
+    private final Map<UUID, InsomniaEffect> effectMap = new HashMap<>();
+
+    private final GhostRenderer renderer;
 
     public World(org.bukkit.World world) {
         this.worldId = world.getUID();
+        this.renderer = new GhostRenderer(JavaPlugin.getPlugin(Insomnia.class));
     }
 
     public EntityInsomniaPhantom getPhantom(UUID id) {
-        return phantomMap.getOrDefault(id, null);
+        for (InsomniaEffect effect : effectMap.values()) {
+            EntityInsomniaPhantom phantom = effect.phantoms().stream().filter(e -> e.getUniqueID().equals(id)).findAny().orElse(null);
+            if (phantom != null)
+                return phantom;
+        }
+
+        return null;
     }
 
     public void spawnMortalPhantom(Player target) {
-        EntityPlayer player = ((CraftPlayer) target).getHandle();
+        throw new UnsupportedOperationException("Not yet implemented.");
+        /*EntityPlayer player = ((CraftPlayer) target).getHandle();
         Location pLoc = target.getLocation();
 
         EntityInsomniaPhantom phantom = new EntityInsomniaPhantom(EntityInsomniaPhantom.AttackPhase.CHASE, player.world);
@@ -38,34 +47,39 @@ public class World {
 
         phantomMap.put(phantom.getUniqueID(), phantom);
 
-        player.world.addEntity(phantom, CreatureSpawnEvent.SpawnReason.CUSTOM);
+        player.world.addEntity(phantom, CreatureSpawnEvent.SpawnReason.CUSTOM);*/
     }
 
-    public void spawnInsomniaPhantom(Player target, int level) {
-        EntityPlayer player = ((CraftPlayer) target).getHandle();
-        Location pLoc = target.getLocation();
+    public void addInsomniaEffect(Player player, int level) {
+        /** this will indirectly call {@link World#registerNewInsomniaEffect(Player player, InsomniaEffect effect) } **/
+        player.addPotionEffect(new PotionEffect(PotionEffectType.INSOMNIA, 99999, level, true, true));
+    }
 
-        Random rnd = new Random();
+    public void removeInsomniaEffect(Player player) {
+        InsomniaEffect effect = getInsomniaEffect(player);
+        if (effect == null)
+            return;
 
-        EntityInsomniaPhantom phantom = new EntityInsomniaPhantom(EntityInsomniaPhantom.AttackPhase.SWOOP, player.world, target, level);
-        phantom.setPosition(pLoc.getX() + rnd.nextInt(50), pLoc.getY() + rnd.nextInt(35) + 25, pLoc.getZ() + rnd.nextInt(50));
+        effect.end();
+        effectMap.remove(player.getUniqueId());
+    }
 
-        Insomnia.logger().info("Spawned phantom with id " + phantom.getUniqueID());
-        phantomMap.put(phantom.getUniqueID(), phantom);
+    public void registerNewInsomniaEffect(Player player, int i) {
+        InsomniaEffect effect = getInsomniaEffect(player);
+        if (effect != null) {
+            effect.updateSeverity(i);
+            return;
+        }
+        effect = new InsomniaEffect(player, i);
+        effectMap.put(player.getUniqueId(), effect);
+    }
 
-        player.world.addEntity(phantom, CreatureSpawnEvent.SpawnReason.CUSTOM);
+    public InsomniaEffect getInsomniaEffect(Player player) {
+        return effectMap.get(player.getUniqueId());
     }
 
     public org.bukkit.World getBukkitWorld() {
         return Bukkit.getWorld(worldId);
-    }
-
-    public void addPhantom(EntityInsomniaPhantom phantom) {
-        phantomMap.put(phantom.getUniqueID(), phantom);
-    }
-
-    public void removePhantom(UUID id) {
-        phantomMap.remove(id);
     }
 
 }

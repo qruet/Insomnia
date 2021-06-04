@@ -1,7 +1,9 @@
 package dev.qruet.insomnia.server;
 
+import dev.qruet.insomnia.effect.insomnia.InsomniaEffect;
 import dev.qruet.insomnia.server.world.World;
 import org.apache.commons.lang.Validate;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
@@ -21,6 +23,10 @@ public class Server {
         for (org.bukkit.World world : server.getWorlds()) {
             WORLD_MAP.put(world.getUID(), new World(world));
         }
+    }
+
+    public static InsomniaEffect getInsomniaEffect(Player player) {
+        return getWorld(player.getWorld().getUID()).getInsomniaEffect(player);
     }
 
     public static Stream<World> getWorlds() {

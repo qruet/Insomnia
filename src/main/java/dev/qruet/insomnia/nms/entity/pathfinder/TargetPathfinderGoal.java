@@ -6,6 +6,7 @@ import dev.qruet.insomnia.nms.entity.EntityInsomniaPhantom;
 import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Phantom;
 import org.bukkit.event.entity.EntityTargetEvent;
@@ -28,7 +29,7 @@ public class TargetPathfinderGoal extends PathfinderGoal {
         this.phantom = phantom;
 
         this.b = (new PathfinderTargetCondition()).a(128.0D);
-        this.c = 20;
+        this.c = phantom.getRandom().nextInt(450) + 150;
     }
 
     public boolean a() {
@@ -36,35 +37,14 @@ public class TargetPathfinderGoal extends PathfinderGoal {
             --this.c;
             return false;
         } else {
-            this.c = 20;
+            this.c = phantom.getRandom().nextInt(220) + 80;
 
-            Collection<org.bukkit.entity.Entity> entities = phantom.world.getWorld().getNearbyEntities(
-                    phantom.getBukkitEntity().getBoundingBox().expand(24.0D, 120.0D, 24.0D), entity -> {
-                        if (entity instanceof LivingEntity) {
-                            LivingEntity living = (LivingEntity) entity;
-                            if (!(living instanceof Phantom)) {
-                                return living.hasPotionEffect(PotionEffectType.INSOMNIA);
-                            }
-                        }
-                        return false;
-                    });
-
-            List<org.bukkit.entity.Entity> list = Lists.newLinkedList();
-            list.addAll(entities);
-
-            if (!list.isEmpty()) {
-                list.sort(Comparator.comparing(e -> ((org.bukkit.entity.Entity) e).getLocation().getY()).reversed());
-                Iterator iterator = list.iterator();
-
-                while (iterator.hasNext()) {
-                    EntityLiving entity = ((CraftLivingEntity) (LivingEntity) iterator.next()).getHandle();
-                    if (phantom.a(entity, PathfinderTargetCondition.a)) {
-                        // debug
-                        phantom.setGoalTarget(entity, EntityTargetEvent.TargetReason.CLOSEST_ENTITY, true);
-                        phantom.setCurrentPhase(EntityInsomniaPhantom.AttackPhase.SWOOP);
-                        return true;
-                    }
-
+            if (phantom.isGhost()) {
+                EntityPlayer player = ((CraftPlayer) phantom.getTarget()).getHandle();
+                if (phantom.a(player, PathfinderTargetCondition.a)) {
+                    phantom.setGoalTarget(player, EntityTargetEvent.TargetReason.CLOSEST_ENTITY, true);
+                    phantom.setCurrentPhase(EntityInsomniaPhantom.AttackPhase.SWOOP);
+                    return true;
                 }
             }
 

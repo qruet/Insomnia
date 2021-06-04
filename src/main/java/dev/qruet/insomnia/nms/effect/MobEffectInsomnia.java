@@ -1,19 +1,12 @@
 package dev.qruet.insomnia.nms.effect;
 
-import com.google.common.collect.Maps;
-
-import java.util.Iterator;
-import java.util.Map;
-import java.util.UUID;
-import javax.annotation.Nullable;
-
 import dev.qruet.insomnia.server.Server;
-import net.minecraft.server.v1_16_R3.*;
-import net.minecraft.server.v1_16_R3.MobEffects;
-import org.bukkit.Bukkit;
+import dev.qruet.insomnia.server.world.World;
+import net.minecraft.server.v1_16_R3.AttributeMapBase;
+import net.minecraft.server.v1_16_R3.EntityLiving;
+import net.minecraft.server.v1_16_R3.MobEffectInfo;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityRegainHealthEvent;
 
 public class MobEffectInsomnia extends net.minecraft.server.v1_16_R3.MobEffectList {
 
@@ -29,6 +22,13 @@ public class MobEffectInsomnia extends net.minecraft.server.v1_16_R3.MobEffectLi
     @Override
     public void a(EntityLiving entityliving, AttributeMapBase attributemapbase, int i) {
         super.a(entityliving, attributemapbase, i);
+
+        LivingEntity entity = (LivingEntity) entityliving.getBukkitEntity();
+        if (entity instanceof Player) {
+            Player player = (Player) entity;
+            World world = Server.getWorld(player.getWorld().getUID());
+            world.removeInsomniaEffect(player);
+        }
     }
 
     // This function gets called when effect is added
@@ -41,7 +41,7 @@ public class MobEffectInsomnia extends net.minecraft.server.v1_16_R3.MobEffectLi
         LivingEntity entity = (LivingEntity) entityliving.getBukkitEntity();
         if (entity instanceof Player) {
             Player player = (Player) entity;
-            Server.getWorld(player.getWorld().getUID()).spawnInsomniaPhantom(player, i);
+            Server.getWorld(player.getWorld().getUID()).registerNewInsomniaEffect(player, i);
         }
     }
 

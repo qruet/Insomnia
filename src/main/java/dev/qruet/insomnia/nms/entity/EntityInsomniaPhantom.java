@@ -12,8 +12,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityCombustByEntityEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -24,6 +26,8 @@ import java.lang.reflect.Field;
 import java.util.UUID;
 
 public class EntityInsomniaPhantom extends net.minecraft.server.v1_16_R3.EntityPhantom {
+
+    private static final JavaPlugin PLUGIN = JavaPlugin.getPlugin(Insomnia.class);
 
     public Vec3D c;
     public BlockPosition d;
@@ -68,7 +72,7 @@ public class EntityInsomniaPhantom extends net.minecraft.server.v1_16_R3.EntityP
 
         loadData(tag);
 
-        Server.getWorld(world.getWorld().getUID()).addPhantom(this);
+        //Server.getWorld(world.getWorld().getUID()).addPhantom(this);
     }
 
     /**
@@ -96,8 +100,10 @@ public class EntityInsomniaPhantom extends net.minecraft.server.v1_16_R3.EntityP
 
         this.container = getBukkitEntity().getPersistentDataContainer();
 
-        this.goalSelector.a(1, new LightPathfinderGoal(this));
-        this.goalSelector.a(2, new GustPathfinderGoal(this));
+        if (level <= 2) {
+            this.goalSelector.a(1, new LightPathfinderGoal(this));
+            this.goalSelector.a(2, new GustPathfinderGoal(this));
+        }
         this.goalSelector.a(2, new AttackPathfinderGoal(this));
         this.goalSelector.a(3, new CirclePathfinderGoal(this));
         this.targetSelector.a(1, new TargetPathfinderGoal(this));
@@ -176,6 +182,51 @@ public class EntityInsomniaPhantom extends net.minecraft.server.v1_16_R3.EntityP
     }
 
     @Override
+    public boolean attackEntity(Entity entity) {
+        if (!isGhost())
+            return super.attackEntity(entity);
+
+        float f = level * 2.5f;
+        float f1 = (float) this.b((AttributeBase) GenericAttributes.ATTACK_KNOCKBACK);
+
+        if (entity instanceof EntityLiving) {
+            f += EnchantmentManager.a(this.getItemInMainHand(), ((EntityLiving) entity).getMonsterType());
+            f1 += (float) EnchantmentManager.b(this);
+        }
+
+        int i = EnchantmentManager.getFireAspectEnchantmentLevel(this);
+        if (i > 0) {
+            EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), entity.getBukkitEntity(), i * 4);
+            Bukkit.getPluginManager().callEvent(combustEvent);
+            if (!combustEvent.isCancelled()) {
+                entity.setOnFire(combustEvent.getDuration(), false);
+            }
+        }
+
+        boolean flag = entity.damageEntity(DamageSource.GENERIC, f);
+        if (flag) {
+            if (f1 > 0.0F && entity instanceof EntityLiving) {
+                ((EntityLiving) entity).a(f1 * 0.5F, (double) MathHelper.sin(this.yaw * 0.017453292F), (double) (-MathHelper.cos(this.yaw * 0.017453292F)));
+                this.setMot(this.getMot().d(0.6D, 1.0D, 0.6D));
+            }
+
+            this.a((EntityLiving) this, (Entity) entity);
+            this.z(entity);
+        }
+
+        return flag;
+    }
+
+    @Override
+    public boolean damageEntity(DamageSource source, float f) {
+        if (level <= 2) {
+            disappear();
+            return true;
+        }
+        return super.damageEntity(source, f);
+    }
+
+    @Override
     public void movementTick() {
         if (isNoAI())
             return;
@@ -185,10 +236,10 @@ public class EntityInsomniaPhantom extends net.minecraft.server.v1_16_R3.EntityP
 
     public void disappear() {
         if (target != null)
-            target.playSound(getBukkitEntity().getLocation(), Sound.ENTITY_PHANTOM_DEATH, 0f, 1f);
+            target.playSound(getBukkitEntity().getLocation(), Sound.ENTITY_PHANTOM_DEATH, 0.7f, 0.7f);
         else
-            world.getWorld().playSound(getBukkitEntity().getLocation(), Sound.ENTITY_PHANTOM_DEATH, 0f, 1f);
-        world.getWorld().spawnParticle(org.bukkit.Particle.CLOUD, getBukkitEntity().getLocation(), 20, 0, 0, 0, 0.2);
+            world.getWorld().playSound(getBukkitEntity().getLocation(), Sound.ENTITY_PHANTOM_DEATH, 0.7f, 0.7f);
+        world.getWorld().spawnParticle(org.bukkit.Particle.SMOKE_LARGE, getBukkitEntity().getLocation(), 20, 0, 0, 0, 0.2);
         die();
     }
 
@@ -202,15 +253,13 @@ public class EntityInsomniaPhantom extends net.minecraft.server.v1_16_R3.EntityP
     public void saveData(NBTTagCompound nbttagcompound) {
         super.saveData(nbttagcompound);
 
-        JavaPlugin plugin = JavaPlugin.getPlugin(Insomnia.class);
-
         if (container == null)
             container = getBukkitEntity().getPersistentDataContainer();
 
-        container.set(new NamespacedKey(plugin, "Size"), PersistentDataType.INTEGER, getSize());
-        container.set(new NamespacedKey(plugin, "Level"), PersistentDataType.INTEGER, level);
-        container.set(new NamespacedKey(plugin, "AttackPhase"), PersistentDataType.STRING, getCurrentPhase().name());
-        container.set(new NamespacedKey(plugin, "Target"), PersistentDataType.STRING, target != null ? target.getUniqueId().toString() : "");
+        container.set(new NamespacedKey(PLUGIN, "Size"), PersistentDataType.INTEGER, getSize());
+        container.set(new NamespacedKey(PLUGIN, "Level"), PersistentDataType.INTEGER, level);
+        container.set(new NamespacedKey(PLUGIN, "AttackPhase"), PersistentDataType.STRING, getCurrentPhase().name());
+        container.set(new NamespacedKey(PLUGIN, "Target"), PersistentDataType.STRING, target != null ? target.getUniqueId().toString() : "");
     }
 
     @Override
